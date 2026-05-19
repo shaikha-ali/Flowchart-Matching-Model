@@ -1,0 +1,27 @@
+BEFORE EXPORT:
+│
+├─ Sort by:
+│  1. opportunityId ASC (group by opportunity)
+│  2. final_score DESC (higher score first)
+│  3. product_similarity DESC (tiebreaker)
+│  4. original_row_index ASC (stable tiebreaker)
+│
+├─ Assign rank ∈ {1, 2, 3, ...} per opportunityId
+│  (restarts for each opportunity)
+│
+├─ Re-sort by companyId ASC, then rank ASC
+│  (for row export order)
+│
+├─ Assign id = row_number (1, 2, 3, ...)
+│
+├─ Verify ranking semantics:
+│  ├─ For each opportunity, rank 1 should have max final_score
+│  ├─ Count violations
+│  └─ Print QA warnings
+│
+└─ Output to Excel:
+   ├─ All rows in final sort order
+   ├─ Columns: 31 standardized fields
+   ├─ Header row formatted (dark background, white text)
+   ├─ ai_decision color-coded (green=Yes, red=No, gray=Filtered)
+   └─ Text columns wrapped (narratives readable)
