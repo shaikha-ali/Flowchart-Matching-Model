@@ -1,0 +1,27 @@
+FOR EACH passing pair (_send_to_gpt == True):
+│
+├─ Batch candidates (up to 14 per call)
+├─ Call gpt-4.1 with:
+│  ├─ opportunity_context (name, sector, description, highlights, value_prop,
+│  │                        demand_drivers, materials, extracted entities)
+│  └─ candidate list (company name, sector, profile, products, extracted entities,
+│                     match_path, ranking_signals)
+│
+├─ Receive JSON response:
+│  ├─ ai_decision ∈ {Yes, No}
+│  ├─ ai_explanation (2–4 sentence analyst memo)
+│  ├─ ai_insight (1 strategic non-obvious observation)
+│  ├─ suggested_plan (list of 3 concrete steps)
+│  └─ match_reason (list of 3 evidence-cited reasons)
+│
+├─ Normalize (safe_decision):
+│  ├─ ai_decision: "yes" → "Yes", else → "No"
+│  ├─ ai_score: 1 if Yes, 0 if No
+│  ├─ Ensure suggested_plan, match_reason are exactly 3 items (pad with "")
+│  └─ Sanitize strings
+│
+└─ Update df row:
+   ├─ ai_decision, ai_score
+   ├─ ai_explanation, ai_insight
+   ├─ suggested_plan, match_reason
+   └─ Row stays in DataFrame
