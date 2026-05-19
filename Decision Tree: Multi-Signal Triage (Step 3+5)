@@ -1,0 +1,32 @@
+FOR EACH company–opportunity pair:
+│
+├─ Signal 1: sectors_overlap(comp_sector, opp_sector, ontology)?
+│  └─ YES → PASS (add "sector_overlap" to pass_labels)
+│
+├─ Signal 2: comp_sector in adjacent_value_chain_sectors?
+│  └─ YES → PASS (add "value_chain_adjacent")
+│
+├─ Signal 3: keyword_match_count(capability_keywords, comp_profile+products) ≥ 2?
+│  └─ YES → PASS (add "capability_keywords:N")
+│
+├─ Signal 4: keyword_match_count(required_inputs, comp_products) ≥ 1?
+│  └─ YES → PASS (add "input_overlap:N")
+│
+├─ Signal 5: sim_struct_product[ci,oi] ≥ 0.80?
+│  └─ YES → PASS (add "signal_product_sim:X.XXX")
+│
+├─ Signal 6: sim_profile[ci,oi] ≥ 0.82?
+│  └─ YES → PASS (add "signal_profile_sim:X.XXX")
+│
+└─ If ANY signal fires:
+   ├─ _send_to_gpt = True
+   ├─ triage_pass = True
+   ├─ triage_reason = formatted pass_labels
+   └─ → Route to GPT Step 6
+   
+   Else:
+   ├─ _send_to_gpt = False
+   ├─ triage_pass = False
+   ├─ ai_decision = "Filtered"
+   ├─ triage_reason = "signal values: overlap=X, adj=X, kw=X, inp=X, sig_p=X, sig_pf=X"
+   └─ → Skip GPT, count as n_filtered
